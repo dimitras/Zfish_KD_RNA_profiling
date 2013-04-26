@@ -1,0 +1,30 @@
+Zebrafish WT - KD - RNA profiling
+
+3 Penn_Dev samples:
+1) B2 with 3 replicates with 8 samples each (WT)
+2) RNA injection with 3 replicates with 8 samples each
+3) KD with 3 replicates with 8 samples each
+
+STEP 1: convert raw to mgf with msconvert tool
+STEP 2: search in mascot using mass spectrometry data to identify proteins from a primary sequence database (search each sample by each replicate and by all replicates, so 4 searches per sample)
+STEP 3: serial conversion of dats to csvs (run the ruby script on mascot server)
+STEP 4: create a peptide list with the highest scored, phospho modified peptides of the Penn Dev combined search of the 3 replicates per sample
+		Applied filters:
+		1) get all peptides "Phospho" modified => pep_var_mod
+		2) unique highest scored peptides => pep_score >=30
+		3) only keep rank 1 peptides => pep_rank
+		4) have expectancy cutoff => pep_expect
+		5) sort list by peptide score
+STEP 5: create a protein list with the unique proteins in each sample
+STEP 6: create a list with all proteins identified in each sample, that don't overlap with the ones in the other samples
+		1) WT vs RNA (overexpression)
+		2) WT vs KD
+		3) RNA vs KD
+		For each comparison create one merged list, ie expressed in WT only, expressed in RNA only, expressed in both with ratio. 
+		NOTE: For the non-common expressions, assign a flag and an extreme high/low ratio.
+STEP 7: get the intersection of WT-RNA and WT-KD for the top 300 proteins or the top 20% and check if they are included in the RNA-KD.
+STEP 8: create a list with the identified proteins that are common in these experiments and calculate the significant and total 'matched peptides' ratios and log ratios for the differential expression, using the matched peptides abundance. 
+		NOTE: In case there are 0 significant peptide matches, the log ratio is not calculated, leaving an empty cell.
+
+
+
